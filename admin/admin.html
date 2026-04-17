@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel administrador</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main class="admin-wrap">
+    <h1>Panel administrador</h1>
+
+    <form id="productoForm" class="admin-form" enctype="multipart/form-data">
+      <input type="hidden" id="productoId">
+
+      <input type="text" id="nombre" placeholder="Nombre del producto" required>
+      <input type="number" id="precio" placeholder="Precio" required>
+      <textarea id="descripcion" placeholder="Descripción"></textarea>
+
+      <select id="categoria" required>
+        <option value="">Seleccionar categoría</option>
+        <option value="buzos">Buzos</option>
+        <option value="remeras">Remeras</option>
+        <option value="conjuntos">Conjuntos</option>
+        <option value="deportivos">Deportivos</option>
+        <option value="pantalones">Pantalones</option>
+        <option value="calzado">Calzado</option>
+      </select>
+
+      <input type="text" id="talles" placeholder="Talles ej: S, M, L">
+      <input type="text" id="colores" placeholder="Colores ej: Blanco, Rosa, Negro">
+      <input type="number" id="stock" placeholder="Stock" min="0">
+      <input type="file" id="imagen" accept="image/*">
+
+      <button type="submit" id="submitBtn">Guardar producto</button>
+    </form>
+
+    <section>
+      <h2>Productos cargados</h2>
+      <div id="listaProductos"></div>
+    </section>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>

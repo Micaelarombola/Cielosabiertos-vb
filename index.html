@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cielos Abiertos VB</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- Barra anuncio -->
+  <div class="announcement-bar">
+    <div class="announcement-track">
+      <span>ENVÍOS A TODO EL PAÍS</span>
+      <span>•</span>
+      <span>COMPRÁ POR WHATSAPP</span>
+      <span>•</span>
+      <span>10% OFF POR TRANSFERENCIA</span>
+      <span>•</span>
+      <span>NUEVA COLECCIÓN DISPONIBLE</span>
+      <span>•</span>
+      <span>ENVÍOS A TODO EL PAÍS</span>
+      <span>•</span>
+      <span>COMPRÁ POR WHATSAPP</span>
+      <span>•</span>
+      <span>10% OFF POR TRANSFERENCIA</span>
+      <span>•</span>
+      <span>NUEVA COLECCIÓN DISPONIBLE</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-top">
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+
+      <a href="#inicio" class="brand">
+        <img src="Fotos/logo1.jpeg" alt="Cielos Abiertos VB" class="brand-logo">
+        <div class="brand-copy">
+          <span class="brand-name">Cielos Abiertos</span>
+          <span class="brand-sub">VB</span>
+        </div>
+      </a>
+
+      <button class="cart-button" id="openCart" aria-label="Abrir carrito">
+        <span>Carrito</span>
+        <b>(<span id="cartCount">0</span>)</b>
+      </button>
+    </div>
+
+    <nav class="desktop-nav">
+      <a href="#inicio">Inicio</a>
+      <a href="#coleccion">Colección</a>
+      <a href="#bestSellers">Destacados</a>
+      <a href="#categorias">Categorías</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#inicio">Inicio</a>
+      <a href="#coleccion">Colección</a>
+      <a href="#bestSellers">Destacados</a>
+      <a href="#categorias">Categorías</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="#contacto">Contacto</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" id="inicio">
+    <div class="hero-slider-bg" id="heroSlider">
+      <img src="Fotos/inicio1.png" alt="Colección 1" class="active">
+      <img src="Fotos/inicio2.png" alt="Colección 2">
+
+    </div>
+
+    <div class="hero-overlay"></div>
+
+
+    <div class="hero-dots" id="heroDots"></div>
+    </div>
+  </section>
+
+  <!-- Categorías visuales -->
+  <section class="section section-cats-home">
+    <div class="section-head center">
+      <p class="section-kicker">Elegí tu estilo</p>
+      <h2>Categorías destacadas</h2>
+    </div>
+
+    <div class="home-categories">
+      <a href="#coleccion" class="home-cat" data-cat-link="buzos">
+        <div class="home-cat-circle">
+          <img src="Fotos/Buzo1.PNG" alt="Buzos">
+        </div>
+        <span>Buzos</span>
+      </a>
+
+      <a href="#coleccion" class="home-cat" data-cat-link="remeras">
+        <div class="home-cat-circle">
+          <img src="Fotos/Remera1.jfif" alt="Remeras">
+        </div>
+        <span>Remeras</span>
+      </a>
+
+      <a href="#coleccion" class="home-cat" data-cat-link="conjuntos">
+        <div class="home-cat-circle">
+          <img src="Fotos/conjuntos1.jfif" alt="Conjuntos">
+        </div>
+        <span>Conjuntos</span>
+      </a>
+
+      <a href="#coleccion" class="home-cat" data-cat-link="deportivos">
+        <div class="home-cat-circle">
+          <img src="Fotos/deportivos.jfif" alt="Deportivos">
+        </div>
+        <span>Deportivos</span>
+      </a>
+
+      <a href="#coleccion" class="home-cat" data-cat-link="pantalones">
+        <div class="home-cat-circle">
+          <img src="Fotos/Pantalon1.jfif" alt="Pantalones">
+        </div>
+        <span>Pantalones</span>
+      </a>
+
+      <a href="#coleccion" class="home-cat" data-cat-link="calzado">
+        <div class="home-cat-circle">
+          <img src="Fotos/zapatos1.jfif" alt="Calzado">
+        </div>
+        <span>Calzado</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Banner editorial -->
+  <section class="section editorial-banner">
+    <div class="editorial-grid">
+      <div class="editorial-image">
+        <img src="Fotos/conjuntos5.jfif" alt="Colección destacada">
+      </div>
+
+      <div class="editorial-copy">
+        <p class="section-kicker">Cielos Abiertos VB</p>
+        <h2>Una tienda pensada para mostrar cada prenda con más presencia visual</h2>
+        <p>
+          Diseños cómodos, combinables y con identidad propia.
+          Elegí tu categoría favorita, mirá los destacados y enviá tu pedido en segundos.
+        </p>
+        <a href="#bestSellers" class="text-link">Ver destacados</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Best sellers -->
+  <section class="section" id="bestSellers">
+    <div class="section-head center">
+      <p class="section-kicker">Lo más elegido</p>
+      <h2>Productos destacados</h2>
+    </div>
+
+    <div class="products-grid" id="bestSellerGrid"></div>
+  </section>
+
+  <!-- Beneficios -->
+  <section class="section benefits-wrap">
+    <div class="benefit-box">
+      <h3>10% OFF</h3>
+      <p>Consultá precio especial abonando por transferencia.</p>
+    </div>
+
+    <div class="benefit-box">
+      <h3>Envíos</h3>
+      <p>Realizamos envíos a todo el país y también retiro a coordinar.</p>
+    </div>
+
+    <div class="benefit-box">
+      <h3>Pedido simple</h3>
+      <p>Agregás al carrito y enviás tu pedido directo por WhatsApp.</p>
+    </div>
+  </section>
+
+  <!-- Colección -->
+  <section class="section" id="categorias">
+    <div class="section-head center">
+      <p class="section-kicker">Filtrar colección</p>
+      <h2>Categorías</h2>
+    </div>
+
+    <div class="filters">
+      <button class="cat-btn active" data-cat="todos">Todos</button>
+      <button class="cat-btn" data-cat="buzos">Buzos</button>
+      <button class="cat-btn" data-cat="remeras">Remeras</button>
+      <button class="cat-btn" data-cat="conjuntos">Conjuntos</button>
+      <button class="cat-btn" data-cat="deportivos">Deportivos</button>
+      <button class="cat-btn" data-cat="pantalones">Pantalones</button>
+      <button class="cat-btn" data-cat="calzado">Calzado</button>
+    </div>
+  </section>
+
+  <section class="section" id="coleccion">
+    <div class="section-head center">
+      <p class="section-kicker">Shop online</p>
+      <h2>Nuestra colección</h2>
+    </div>
+
+    <div class="products-grid" id="productGrid"></div>
+  </section>
+
+  <!-- Nosotros -->
+  <section class="section about-section" id="nosotros">
+    <div class="about-grid">
+      <div class="about-card image-card">
+        <img src="Fotos/logo1.jpeg" alt="Nosotros">
+      </div>
+
+      <div class="about-card text-card">
+        <p class="section-kicker">Sobre la marca</p>
+        <h2>Nosotros</h2>
+        <p>
+          En <strong>Cielos Abiertos VB</strong> buscamos ofrecer prendas femeninas,
+          cómodas y versátiles para acompañarte en tu día a día.
+        </p>
+        <p>
+          Nuestra idea es que encuentres looks simples, lindos y fáciles de combinar,
+          con una compra rápida y personalizada.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacto -->
+  <section class="section contact-section" id="contacto">
+    <div class="section-head center">
+      <p class="section-kicker">Contacto</p>
+      <h2>Hacé tu consulta</h2>
+    </div>
+
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h3>WhatsApp</h3>
+        <p>1127020865</p>
+      </div>
+
+
+      <div class="contact-card">
+        <h3>Instagram</h3>
+        <p>@Cielosabiertosvb</p>
+      </div>
+
+      <div class="contact-card">
+        <h3>Entregas</h3>
+        <p>Retiro o punto de entrega a coordinar</p>
+      </div>
+    </div>
+  </section>
+  <section class="payments-section">
+    <div class="payments-wrap">
+
+      <h3>Medios de pago</h3>
+
+      <div class="payments-logos">
+        <img src="Fotos/visa.webp">
+        <img src="Fotos/mastercard.png">
+        <img src="Fotos/amex.png">
+        <img src="Fotos/cabal.png">
+        <img src="Fotos/naranja.png">
+        <img src="Fotos/mercadopago.jfif">
+      </div>
+
+      <h3>Envíos</h3>
+
+      <div class="shipping-logos">
+        <img src="Fotos/correo.svg">
+        <img src="Fotos/viacargo.jfif">
+        <img src="Fotos/Ecapack.webp">
+        <img src="Fotos/motomen.png">
+
+
+      </div>
+
+    </div>
+  </section>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div>
+        <h3>Cielos Abiertos VB</h3>
+        <p>Moda femenina con estilo propio.</p>
+      </div>
+
+      <div>
+        <h4>Cambios</h4>
+        <p>Se realizan dentro de los 10 días con etiqueta y ticket.</p>
+      </div>
+
+      <div>
+        <h4>Envíos</h4>
+        <p>Envíos a todo el país o retiro sin cargo.</p>
+      </div>
+    </div>
+
+    <div class="footer-copy">
+      © <span id="year"></span> Cielos Abiertos VB — Todos los derechos reservados.
+    </div>
+  </footer>
+
+  <!-- Drawer carrito -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-overlay" id="closeCart"></div>
+
+    <aside class="drawer-panel">
+      <div class="drawer-head">
+        <h3>Tu carrito</h3>
+        <button class="close-btn" id="closeX">✕</button>
+      </div>
+
+      <div class="drawer-content">
+        <div id="cartItems"></div>
+
+        <div class="cart-summary">
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <b>$ <span id="subtot">0</span></b>
+          </div>
+          <div class="summary-row">
+            <span>Recargo</span>
+            <b>$ <span id="recargo">0</span></b>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <b>$ <span id="total">0</span></b>
+          </div>
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <a href="#" class="btn btn-primary full" id="checkout">Enviar pedido por WhatsApp</a>
+        <small>Tu pedido se enviará por WhatsApp para coordinar la compra.</small>
+      </div>
+    </aside>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
