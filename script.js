@@ -387,17 +387,30 @@ function activarCategoria(cat) {
 }
 
 function initFeaturedCategoryLinks() {
-  const links = $$("[data-cat-link]");
+  const links = document.querySelectorAll("[data-cat-link]");
 
   links.forEach((link) => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+
       const categoria = link.dataset.catLink;
 
-      if (categoria) {
-        setTimeout(() => {
-          activarCategoria(categoria);
-        }, 100);
+      // 👉 Scroll suave al shop
+      const target = document.querySelector("#coleccion");
+      if (target) {
+        const offset = 110;
+        const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+
+        window.scrollTo({
+          top,
+          behavior: "smooth"
+        });
       }
+
+      // 👉 Activar categoría
+      setTimeout(() => {
+        activarCategoria(categoria);
+      }, 300);
     });
   });
 }
