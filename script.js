@@ -7,7 +7,52 @@ const BASE_URL = "https://cielos-abiertos-vb-api.onrender.com";
 
 let productosBackend = [];
 let categoriaActual = "todos";
+let subcategoriaActual = "todas";
 const cart = [];
+
+const SUBCATEGORIAS = {
+  "partes-de-arriba": [
+    "Todas",
+    "Buzos",
+    "Camperas",
+    "Sacos",
+    "Remeras",
+    "Sweters",
+    "Remerones",
+    "Camisacos",
+    "Tapados",
+    "Vestidos"
+  ],
+  "partes-de-abajo": [
+    "Todas",
+    "Jeans",
+    "Pantalones",
+    "Shorts",
+    "Pollera"
+  ],
+  "linea-deportiva": [
+    "Todas",
+    "Tops",
+    "Chupines",
+    "Bikers",
+    "Shorts",
+    "Polleras shorts",
+    "Remeras deportivas",
+    "Sudaderas"
+  ],
+  "calzados": [
+    "Todas",
+    "Calzados"
+  ],
+  "accesorios": [
+    "Todas",
+    "Accesorios"
+  ],
+  "ofertas-imperdibles": [
+    "Todas",
+    "Ofertas imperdibles"
+  ]
+};
 
 /* =========================
    Menú mobile
@@ -105,8 +150,8 @@ function calcularPrecioTransferencia(precio) {
   return Math.round(Number(precio) * 0.9);
 }
 
-function normalizarCategoria(categoria) {
-  return String(categoria || "").toLowerCase().trim();
+function normalizarTexto(texto) {
+  return String(texto || "").toLowerCase().trim();
 }
 
 function escaparHTML(texto) {
@@ -116,6 +161,19 @@ function escaparHTML(texto) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function formatearCategoria(categoria) {
+  const mapa = {
+    "partes-de-arriba": "Partes de arriba",
+    "partes-de-abajo": "Partes de abajo",
+    "linea-deportiva": "Línea deportiva",
+    "calzados": "Calzados",
+    "accesorios": "Accesorios",
+    "ofertas-imperdibles": "Ofertas imperdibles"
+  };
+
+  return mapa[categoria] || categoria || "-";
 }
 
 /* =========================
@@ -134,6 +192,7 @@ async function cargarProductos() {
 
     productosBackend = await res.json();
 
+    renderSubcategorias();
     renderProductos();
     renderBestSellers();
   } catch (error) {
@@ -153,12 +212,15 @@ function crearCardProducto(p) {
   const nombre = p.nombre || "Producto";
   const precio = Number(p.precio) || 0;
   const descripcion = p.descripcion || "";
-  const categoria = p.categoria || "-";
+  const categoria = formatearCategoria(p.categoria);
+  const subcategoria = p.subcategoria || "-";
   const colores = p.colores || "-";
   const talles = p.talles || "-";
-const imagen = p.imagen
-  ? (p.imagen.startsWith("http") ? p.imagen : `${BASE_URL}${p.imagen}`)
-  : "";  const precioTransferencia = calcularPrecioTransferencia(precio);
+  const imagen = p.imagen
+    ? (p.imagen.startsWith("http") ? p.imagen : `${BASE_URL}${p.imagen}`)
+    : "";
+
+  const precioTransferencia = calcularPrecioTransferencia(precio);
 
   const card = document.createElement("article");
   card.className = "p-card";
@@ -183,6 +245,7 @@ const imagen = p.imagen
       <div class="product-meta">
         ${descripcion ? `<p class="meta-line"><b>Descripción:</b> ${escaparHTML(descripcion)}</p>` : ""}
         <p class="meta-line"><b>Categoría:</b> ${escaparHTML(categoria)}</p>
+        <p class="meta-line"><b>Subcategoría:</b> ${escaparHTML(subcategoria)}</p>
         <p class="meta-line"><b>Colores:</b> ${escaparHTML(colores)}</p>
         <p class="meta-line"><b>Talles:</b> ${escaparHTML(talles)}</p>
       </div>
@@ -209,7 +272,13 @@ function renderProductos() {
 
   if (categoriaActual !== "todos") {
     productosFiltrados = productosFiltrados.filter((producto) => {
-      return normalizarCategoria(producto.categoria) === categoriaActual;
+      return normalizarTexto(producto.categoria) === categoriaActual;
+    });
+  }
+
+  if (subcategoriaActual !== "todas") {
+    productosFiltrados = productosFiltrados.filter((producto) => {
+      return normalizarTexto(producto.subcategoria) === subcategoriaActual;
     });
   }
 
@@ -242,6 +311,48 @@ function renderBestSellers() {
 }
 
 /* =========================
+   Subcategorías
+========================= */
+function renderSubcategorias() {
+  const box = $("#subFilters");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  if (categoriaActual === "todos" || !SUBCATEGORIAS[categoriaActual]) {
+    box.style.display = "none";
+    return;
+  }
+
+  box.style.display = "flex";
+
+  SUBCATEGORIAS[categoriaActual].forEach((sub) => {
+    const btn = document.createElement("button");
+    btn.className = "subcat-btn";
+    btn.textContent = sub;
+    btn.dataset.subcat = sub === "Todas" ? "todas" : normalizarTexto(sub);
+
+    if (
+      (sub === "Todas" && subcategoriaActual === "todas") ||
+      normalizarTexto(sub) === subcategoriaActual
+    ) {
+      btn.classList.add("active");
+    }
+
+    btn.addEventListener("click", () => {
+      subcategoriaActual = sub === "Todas" ? "todas" : normalizarTexto(sub);
+
+      $$(".subcat-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      renderProductos();
+    });
+
+    box.appendChild(btn);
+  });
+}
+
+/* =========================
    Filtros categorías
 ========================= */
 function initFiltrosCategorias() {
@@ -251,10 +362,12 @@ function initFiltrosCategorias() {
   botones.forEach((btn) => {
     btn.addEventListener("click", () => {
       categoriaActual = btn.dataset.cat || "todos";
+      subcategoriaActual = "todas";
 
       botones.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
 
+      renderSubcategorias();
       renderProductos();
     });
   });
@@ -262,12 +375,14 @@ function initFiltrosCategorias() {
 
 function activarCategoria(cat) {
   categoriaActual = cat;
+  subcategoriaActual = "todas";
 
   const botones = $$(".cat-btn");
   botones.forEach((b) => {
     b.classList.toggle("active", b.dataset.cat === cat);
   });
 
+  renderSubcategorias();
   renderProductos();
 }
 
@@ -458,4 +573,5 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
 renderCart();
 initFiltrosCategorias();
 initFeaturedCategoryLinks();
+renderSubcategorias();
 cargarProductos();

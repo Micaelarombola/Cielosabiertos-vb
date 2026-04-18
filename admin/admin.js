@@ -1,12 +1,59 @@
 const API_URL = "https://cielos-abiertos-vb-api.onrender.com/api/productos";
 const BASE_URL = "https://cielos-abiertos-vb-api.onrender.com";
 
+const SUBCATEGORIAS = {
+  "partes-de-arriba": [
+    "Buzos",
+    "Camperas",
+    "Sacos",
+    "Remeras",
+    "Sweters",
+    "Remerones",
+    "Camisacos",
+    "Tapados",
+    "Vestidos"
+  ],
+  "partes-de-abajo": [
+    "Jeans",
+    "Pantalones",
+    "Shorts",
+    "Pollera"
+  ],
+  "linea-deportiva": [
+    "Tops",
+    "Chupines",
+    "Bikers",
+    "Shorts",
+    "Polleras shorts",
+    "Remeras deportivas",
+    "Sudaderas"
+  ],
+  "calzados": [
+    "Botas",
+    "Zapatillas",
+    "Sandalias",
+    "Texanas",
+    "Mocasines"
+  ],
+  "accesorios": [
+    "Carteras",
+    "Cintos",
+    "Bijou",
+    "Pañuelos",
+    "Gorras"
+  ],
+  "ofertas-imperdibles": [
+    "Ofertas imperdibles"
+  ]
+};
+
 const form = document.getElementById("productoForm");
 const productoId = document.getElementById("productoId");
 const nombre = document.getElementById("nombre");
 const precio = document.getElementById("precio");
 const descripcion = document.getElementById("descripcion");
 const categoria = document.getElementById("categoria");
+const subcategoria = document.getElementById("subcategoria");
 const talles = document.getElementById("talles");
 const colores = document.getElementById("colores");
 const stock = document.getElementById("stock");
@@ -14,9 +61,45 @@ const imagen = document.getElementById("imagen");
 const listaProductos = document.getElementById("listaProductos");
 const submitBtn = document.getElementById("submitBtn");
 
+function cargarSubcategorias(valorCategoria, subSeleccionada = "") {
+  subcategoria.innerHTML = `<option value="">Seleccionar subcategoría</option>`;
+
+  const opciones = SUBCATEGORIAS[valorCategoria] || [];
+
+  opciones.forEach((item) => {
+    const option = document.createElement("option");
+    option.value = item;
+    option.textContent = item;
+
+    if (item === subSeleccionada) {
+      option.selected = true;
+    }
+
+    subcategoria.appendChild(option);
+  });
+}
+
+categoria.addEventListener("change", () => {
+  cargarSubcategorias(categoria.value);
+});
+
+function formatearCategoria(categoriaValor) {
+  const mapa = {
+    "partes-de-arriba": "Partes de arriba",
+    "partes-de-abajo": "Partes de abajo",
+    "linea-deportiva": "Línea deportiva",
+    "calzados": "Calzados",
+    "accesorios": "Accesorios",
+    "ofertas-imperdibles": "Ofertas imperdibles"
+  };
+
+  return mapa[categoriaValor] || categoriaValor || "-";
+}
+
 function resetFormulario() {
   form.reset();
   productoId.value = "";
+  cargarSubcategorias("");
 
   if (submitBtn) {
     submitBtn.textContent = "Guardar producto";
@@ -37,9 +120,7 @@ function mostrarBotonCancelar() {
     btnCancelar.id = "btnCancelar";
     btnCancelar.textContent = "Cancelar edición";
     btnCancelar.className = "btn-cancelar";
-
     btnCancelar.addEventListener("click", resetFormulario);
-
     form.appendChild(btnCancelar);
   }
 }
@@ -57,7 +138,7 @@ async function cargarProductosAdmin() {
     listaProductos.innerHTML = "";
 
     if (!productos.length) {
-      listaProductos.innerHTML = "<p>No hay productos cargados todavía.</p>";
+      listaProductos.innerHTML = `<div class="empty-admin">No hay productos cargados todavía.</div>`;
       return;
     }
 
@@ -71,13 +152,17 @@ async function cargarProductosAdmin() {
 
       div.innerHTML = `
         ${imagenSrc ? `<img src="${imagenSrc}" alt="${producto.nombre}">` : ""}
-        <h3>${producto.nombre}</h3>
-        <p><strong>Precio:</strong> $${Number(producto.precio || 0).toLocaleString("es-AR")}</p>
-        <p><strong>Descripción:</strong> ${producto.descripcion || "-"}</p>
-        <p><strong>Categoría:</strong> ${producto.categoria || "-"}</p>
-        <p><strong>Talles:</strong> ${producto.talles || "-"}</p>
-        <p><strong>Colores:</strong> ${producto.colores || "-"}</p>
-        <p><strong>Stock:</strong> ${producto.stock ?? 0}</p>
+
+        <div class="contenido">
+          <h3>${producto.nombre}</h3>
+          <p><strong>Precio:</strong> $${Number(producto.precio || 0).toLocaleString("es-AR")}</p>
+          <p><strong>Descripción:</strong> ${producto.descripcion || "-"}</p>
+          <p><strong>Categoría:</strong> ${formatearCategoria(producto.categoria)}</p>
+          <p><strong>Subcategoría:</strong> ${producto.subcategoria || "-"}</p>
+          <p><strong>Talles:</strong> ${producto.talles || "-"}</p>
+          <p><strong>Colores:</strong> ${producto.colores || "-"}</p>
+          <p><strong>Stock:</strong> ${producto.stock ?? 0}</p>
+        </div>
 
         <div class="acciones">
           <button class="btn-editar" data-id="${producto.id}">Editar</button>
@@ -89,7 +174,7 @@ async function cargarProductosAdmin() {
     });
   } catch (error) {
     console.error("Error al cargar productos:", error);
-    listaProductos.innerHTML = "<p>Error al cargar productos.</p>";
+    listaProductos.innerHTML = `<div class="empty-admin">Error al cargar productos.</div>`;
   }
 }
 
@@ -106,11 +191,22 @@ form?.addEventListener("submit", async (e) => {
     return;
   }
 
+  if (!categoria.value) {
+    alert("Seleccioná una categoría.");
+    return;
+  }
+
+  if (!subcategoria.value) {
+    alert("Seleccioná una subcategoría.");
+    return;
+  }
+
   const formData = new FormData();
   formData.append("nombre", nombre.value.trim());
   formData.append("precio", precio.value);
   formData.append("descripcion", descripcion.value.trim());
   formData.append("categoria", categoria.value);
+  formData.append("subcategoria", subcategoria.value);
   formData.append("talles", talles.value.trim());
   formData.append("colores", colores.value.trim());
   formData.append("stock", stock.value || 0);
@@ -163,6 +259,7 @@ async function editarProducto(id) {
     precio.value = producto.precio || "";
     descripcion.value = producto.descripcion || "";
     categoria.value = producto.categoria || "";
+    cargarSubcategorias(producto.categoria || "", producto.subcategoria || "");
     talles.value = producto.talles || "";
     colores.value = producto.colores || "";
     stock.value = producto.stock ?? 0;
@@ -221,4 +318,5 @@ document.addEventListener("click", (e) => {
   }
 });
 
+cargarSubcategorias("");
 cargarProductosAdmin();

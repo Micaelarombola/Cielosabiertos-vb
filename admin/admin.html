@@ -15,17 +15,28 @@
 
       <input type="text" id="nombre" placeholder="Nombre del producto" required>
       <input type="number" id="precio" placeholder="Precio" required>
+
       <textarea id="descripcion" placeholder="Descripción"></textarea>
 
-      <select id="categoria" required>
-        <option value="">Seleccionar categoría</option>
-        <option value="buzos">Buzos</option>
-        <option value="remeras">Remeras</option>
-        <option value="conjuntos">Conjuntos</option>
-        <option value="deportivos">Deportivos</option>
-        <option value="pantalones">Pantalones</option>
-        <option value="calzado">Calzado</option>
-      </select>
+      <div class="field-group">
+        <label for="categoria">Categoría</label>
+        <select id="categoria" required>
+          <option value="">Seleccionar categoría</option>
+          <option value="partes-de-arriba">Partes de arriba</option>
+          <option value="partes-de-abajo">Partes de abajo</option>
+          <option value="linea-deportiva">Línea deportiva</option>
+          <option value="calzados">Calzados</option>
+          <option value="accesorios">Accesorios</option>
+          <option value="ofertas-imperdibles">Ofertas imperdibles</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label for="subcategoria">Subcategoría</label>
+        <select id="subcategoria" required>
+          <option value="">Seleccionar subcategoría</option>
+        </select>
+      </div>
 
       <input type="text" id="talles" placeholder="Talles ej: S, M, L">
       <input type="text" id="colores" placeholder="Colores ej: Blanco, Rosa, Negro">
@@ -37,7 +48,7 @@
 
     <section>
       <h2>Productos cargados</h2>
-      <div id="listaProductos"></div>
+      <div id="listaProductos" class="admin-list"></div>
     </section>
   </main>
 
