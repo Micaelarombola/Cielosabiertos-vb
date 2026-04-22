@@ -349,6 +349,14 @@ button{
   line-height:1.8;
   color:rgba(255,255,255,.95);
 }
+.highlight{
+  display:block;
+  margin-top:10px;
+  font-size:1.3rem;
+  font-weight:700;
+  color:#ffffff;
+  letter-spacing:.05em;
+}
 
 .hero-actions{
   display:flex;
@@ -705,28 +713,31 @@ button{
 }
 
 .benefit-box{
-  background:rgba(255,255,255,.92);
-  backdrop-filter:blur(6px);
+  background:linear-gradient(135deg, #3f6db3 0%, #2f5a9c 100%);
+  backdrop-filter:none;
   padding:28px 24px;
   border-radius:22px;
-  border:1px solid var(--line);
+  border:none;
   text-align:center;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
+  color:#ffffff;
+  box-shadow:0 10px 25px rgba(63,109,179,.25);
+  transition:.3s ease;
 }
 
 .benefit-box h3{
   margin:0 0 10px;
   font-family:"Cormorant Garamond", serif;
   font-size:2rem;
-  color:#243754;
+  color:#ffffff;
 }
 
 .benefit-box p{
   margin:0;
-  color:#5d6c80;
+  color:rgba(255,255,255,.85);
   line-height:1.8;
 }
 
@@ -1399,7 +1410,9 @@ button{
   .hero-content{
     padding:42px 14px 24px;
   }
-
+.highlight{
+  font-size:1.1rem;
+}
   .hero h1{
     max-width:250px;
     font-size:2.1rem;
