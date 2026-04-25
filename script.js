@@ -13,32 +13,32 @@ const cart = [];
 const SUBCATEGORIAS = {
   "partes-de-arriba": [
     "Todas",
-    "Buzos",
-    "Camperas",
-    "Sacos",
-    "Remeras",
+    "Buzo",
+    "Campera",
+    "Saco",
+    "Remera",
     "Sweters",
     "Remerones",
     "Camisacos",
-    "Tapados",
-    "Vestidos"
+    "Tapado",
+    "Vestido"
   ],
   "partes-de-abajo": [
     "Todas",
     "Jeans",
-    "Pantalones",
-    "Shorts",
+    "Pantalon",
+    "Short",
     "Pollera"
   ],
   "linea-deportiva": [
     "Todas",
-    "Tops",
+    "Top",
     "Chupines",
-    "Bikers",
-    "Shorts",
-    "Polleras shorts",
-    "Remeras deportivas",
-    "Sudaderas"
+    "Biker",
+    "Short",
+    "Pollera short",
+    "Remera deportiva",
+    "Sudadera"
   ],
   "calzados": [
     "Todas",
