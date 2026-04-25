@@ -12,7 +12,6 @@ const cart = [];
 
 const SUBCATEGORIAS = {
   "partes-de-arriba": [
-    "Todas",
     "Buzo",
     "Campera",
     "Saco",
@@ -24,14 +23,12 @@ const SUBCATEGORIAS = {
     "Vestido"
   ],
   "partes-de-abajo": [
-    "Todas",
-    "Jeans",
+    "Jean",
     "Pantalon",
     "Short",
     "Pollera"
   ],
   "linea-deportiva": [
-    "Todas",
     "Top",
     "Chupines",
     "Biker",
@@ -41,18 +38,24 @@ const SUBCATEGORIAS = {
     "Sudadera"
   ],
   "calzados": [
-    "Todas",
-    "Calzados"
+    "Botas",
+    "Zapatillas",
+    "Sandalias",
+    "Texanas",
+    "Mocasines"
   ],
   "accesorios": [
-    "Todas",
-    "Accesorios"
+    "Carteras",
+    "Cintos",
+    "Bijou",
+    "Pañuelos",
+    "Gorras"
   ],
   "ofertas-imperdibles": [
-    "Todas",
     "Ofertas imperdibles"
   ]
 };
+
 
 /* =========================
    Menú mobile
@@ -268,8 +271,7 @@ function renderProductos() {
 
   grid.innerHTML = "";
 
-  let productosFiltrados = [...productosBackend];
-
+let productosFiltrados = [...productosBackend];
   if (categoriaActual !== "todos") {
     productosFiltrados = productosFiltrados.filter((producto) => {
       return normalizarTexto(producto.categoria) === categoriaActual;
