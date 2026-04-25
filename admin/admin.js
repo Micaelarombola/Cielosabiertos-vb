@@ -1,50 +1,15 @@
-const API_URL = "https://cielos-abiertos-vb-api.onrender.com/api/productos";
-const BASE_URL = "https://cielos-abiertos-vb-api.onrender.com";
+const SUPABASE_URL = "https://wqptuekapjcfgslapylm.supabase.co";
+const SUPABASE_KEY = "sb_publishable_YWyUgFMGDVoR_Wuv0jRqLg_oYPygF9r";
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const SUBCATEGORIAS = {
-  "partes-de-arriba": [
-    "Buzo",
-    "Campera",
-    "Saco",
-    "Remera",
-    "Sweters",
-    "Remerones",
-    "Camisacos",
-    "Tapado",
-    "Vestido"
-  ],
-  "partes-de-abajo": [
-    "Jean",
-    "Pantalon",
-    "Short",
-    "Pollera"
-  ],
-  "linea-deportiva": [
-    "Top",
-    "Chupines",
-    "Biker",
-    "Short",
-    "Pollera short",
-    "Remera deportiva",
-    "Sudadera"
-  ],
-  "calzados": [
-    "Botas",
-    "Zapatillas",
-    "Sandalias",
-    "Texanas",
-    "Mocasines"
-  ],
-  "accesorios": [
-    "Carteras",
-    "Cintos",
-    "Bijou",
-    "Pañuelos",
-    "Gorras"
-  ],
-  "ofertas-imperdibles": [
-    "Ofertas imperdibles"
-  ]
+  "partes-de-arriba": ["Buzo", "Campera", "Saco", "Remera", "Sweters", "Remerones", "Camisacos", "Tapado", "Vestido"],
+  "partes-de-abajo": ["Jean", "Pantalon", "Short", "Pollera"],
+  "linea-deportiva": ["Top", "Chupines", "Biker", "Short", "Pollera short", "Remera deportiva", "Sudadera"],
+  "calzados": ["Botas", "Zapatillas", "Sandalias", "Texanas", "Mocasines"],
+  "accesorios": ["Carteras", "Cintos", "Bijou", "Pañuelos", "Gorras"],
+  "ofertas-imperdibles": ["Ofertas imperdibles"]
 };
 
 const form = document.getElementById("productoForm");
@@ -71,9 +36,7 @@ function cargarSubcategorias(valorCategoria, subSeleccionada = "") {
     option.value = item;
     option.textContent = item;
 
-    if (item === subSeleccionada) {
-      option.selected = true;
-    }
+    if (item === subSeleccionada) option.selected = true;
 
     subcategoria.appendChild(option);
   });
@@ -101,14 +64,10 @@ function resetFormulario() {
   productoId.value = "";
   cargarSubcategorias("");
 
-  if (submitBtn) {
-    submitBtn.textContent = "Guardar producto";
-  }
+  if (submitBtn) submitBtn.textContent = "Guardar producto";
 
   const btnCancelar = document.getElementById("btnCancelar");
-  if (btnCancelar) {
-    btnCancelar.remove();
-  }
+  if (btnCancelar) btnCancelar.remove();
 }
 
 function mostrarBotonCancelar() {
@@ -125,19 +84,39 @@ function mostrarBotonCancelar() {
   }
 }
 
+async function subirImagen(file) {
+  if (!file) return "";
+
+  const nombreArchivo = `${Date.now()}-${file.name}`;
+
+  const { error } = await supabaseClient.storage
+    .from("productos")
+    .upload(nombreArchivo, file);
+
+  if (error) {
+    console.error("Error subiendo imagen:", error);
+    throw new Error("No se pudo subir la imagen");
+  }
+
+  const { data } = supabaseClient.storage
+    .from("productos")
+    .getPublicUrl(nombreArchivo);
+
+  return data.publicUrl;
+}
+
 async function cargarProductosAdmin() {
   try {
-    const res = await fetch(API_URL);
+    const { data: productos, error } = await supabaseClient
+      .from("productos")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    if (!res.ok) {
-      throw new Error("No se pudieron obtener los productos");
-    }
-
-    const productos = await res.json();
+    if (error) throw error;
 
     listaProductos.innerHTML = "";
 
-    if (!productos.length) {
+    if (!productos || !productos.length) {
       listaProductos.innerHTML = `<div class="empty-admin">No hay productos cargados todavía.</div>`;
       return;
     }
@@ -146,12 +125,8 @@ async function cargarProductosAdmin() {
       const div = document.createElement("div");
       div.className = "producto-admin";
 
-      const imagenSrc = producto.imagen
-        ? (producto.imagen.startsWith("http") ? producto.imagen : `${BASE_URL}${producto.imagen}`)
-        : "";
-
       div.innerHTML = `
-        ${imagenSrc ? `<img src="${imagenSrc}" alt="${producto.nombre}">` : ""}
+        ${producto.imagen ? `<img src="${producto.imagen}" alt="${producto.nombre}">` : ""}
 
         <div class="contenido">
           <h3>${producto.nombre}</h3>
@@ -181,58 +156,51 @@ async function cargarProductosAdmin() {
 form?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  if (!nombre.value.trim()) {
-    alert("Por favor ingresá el nombre del producto.");
-    return;
-  }
-
-  if (!precio.value || Number(precio.value) <= 0) {
-    alert("Por favor ingresá un precio válido.");
-    return;
-  }
-
-  if (!categoria.value) {
-    alert("Seleccioná una categoría.");
-    return;
-  }
-
-  if (!subcategoria.value) {
-    alert("Seleccioná una subcategoría.");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("nombre", nombre.value.trim());
-  formData.append("precio", precio.value);
-  formData.append("descripcion", descripcion.value.trim());
-  formData.append("categoria", categoria.value);
-  formData.append("subcategoria", subcategoria.value);
-  formData.append("talles", talles.value.trim());
-  formData.append("colores", colores.value.trim());
-  formData.append("stock", stock.value || 0);
-
-  if (imagen.files[0]) {
-    formData.append("imagen", imagen.files[0]);
-  }
+  if (!nombre.value.trim()) return alert("Por favor ingresá el nombre del producto.");
+  if (!precio.value || Number(precio.value) <= 0) return alert("Por favor ingresá un precio válido.");
+  if (!categoria.value) return alert("Seleccioná una categoría.");
+  if (!subcategoria.value) return alert("Seleccioná una subcategoría.");
 
   try {
-    let res;
+    let imagenUrl = "";
+
+    if (imagen.files[0]) {
+      imagenUrl = await subirImagen(imagen.files[0]);
+    }
+
+    const productoData = {
+      nombre: nombre.value.trim(),
+      precio: Number(precio.value),
+      descripcion: descripcion.value.trim(),
+      categoria: categoria.value,
+      subcategoria: subcategoria.value,
+      talles: talles.value.trim(),
+      colores: colores.value.trim(),
+      stock: Number(stock.value || 0)
+    };
+
+    if (imagenUrl) {
+      productoData.imagen = imagenUrl;
+    }
+
+    let error;
 
     if (productoId.value) {
-      res = await fetch(`${API_URL}/${productoId.value}`, {
-        method: "PUT",
-        body: formData
-      });
+      const response = await supabaseClient
+        .from("productos")
+        .update(productoData)
+        .eq("id", productoId.value);
+
+      error = response.error;
     } else {
-      res = await fetch(API_URL, {
-        method: "POST",
-        body: formData
-      });
+      const response = await supabaseClient
+        .from("productos")
+        .insert([productoData]);
+
+      error = response.error;
     }
 
-    if (!res.ok) {
-      throw new Error("No se pudo guardar el producto");
-    }
+    if (error) throw error;
 
     alert(productoId.value ? "Producto actualizado correctamente." : "Producto guardado correctamente.");
 
@@ -246,13 +214,13 @@ form?.addEventListener("submit", async (e) => {
 
 async function editarProducto(id) {
   try {
-    const res = await fetch(`${API_URL}/${id}`);
+    const { data: producto, error } = await supabaseClient
+      .from("productos")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-    if (!res.ok) {
-      throw new Error("No se pudo cargar el producto");
-    }
-
-    const producto = await res.json();
+    if (error) throw error;
 
     productoId.value = producto.id;
     nombre.value = producto.nombre || "";
@@ -264,16 +232,11 @@ async function editarProducto(id) {
     colores.value = producto.colores || "";
     stock.value = producto.stock ?? 0;
 
-    if (submitBtn) {
-      submitBtn.textContent = "Actualizar producto";
-    }
+    if (submitBtn) submitBtn.textContent = "Actualizar producto";
 
     mostrarBotonCancelar();
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   } catch (error) {
     console.error("Error al cargar producto para editar:", error);
     alert("No se pudo cargar el producto para editar.");
@@ -285,20 +248,17 @@ async function eliminarProducto(id) {
   if (!confirmar) return;
 
   try {
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: "DELETE"
-    });
+    const { error } = await supabaseClient
+      .from("productos")
+      .delete()
+      .eq("id", id);
 
-    if (!res.ok) {
-      throw new Error("No se pudo eliminar el producto");
-    }
+    if (error) throw error;
 
     alert("Producto eliminado correctamente.");
     cargarProductosAdmin();
 
-    if (productoId.value === String(id)) {
-      resetFormulario();
-    }
+    if (productoId.value === String(id)) resetFormulario();
   } catch (error) {
     console.error("Error al eliminar producto:", error);
     alert("Hubo un error al eliminar el producto.");
