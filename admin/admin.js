@@ -112,8 +112,11 @@ async function cargarProductosAdmin() {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
-
+if (error) {
+  console.error("ERROR SUPABASE:", error);
+  alert(error.message);
+  return;
+}
     listaProductos.innerHTML = "";
 
     if (!productos || !productos.length) {
