@@ -3,30 +3,30 @@ const BASE_URL = "https://cielos-abiertos-vb-api.onrender.com";
 
 const SUBCATEGORIAS = {
   "partes-de-arriba": [
-    "Buzos",
-    "Camperas",
-    "Sacos",
-    "Remeras",
+    "Buzo",
+    "Campera",
+    "Saco",
+    "Remera",
     "Sweters",
     "Remerones",
     "Camisacos",
-    "Tapados",
-    "Vestidos"
+    "Tapado",
+    "Vestido"
   ],
   "partes-de-abajo": [
-    "Jeans",
-    "Pantalones",
-    "Shorts",
+    "Jean",
+    "Pantalon",
+    "Short",
     "Pollera"
   ],
   "linea-deportiva": [
-    "Tops",
+    "Top",
     "Chupines",
-    "Bikers",
-    "Shorts",
-    "Polleras shorts",
-    "Remeras deportivas",
-    "Sudaderas"
+    "Biker",
+    "Short",
+    "Pollera short",
+    "Remera deportiva",
+    "Sudadera"
   ],
   "calzados": [
     "Botas",
