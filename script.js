@@ -188,20 +188,23 @@ async function cargarProductos() {
   const grid = $("#productGrid");
   const bestSellerGrid = $("#bestSellerGrid");
 
- const { data, error } = await supabase
-  .from("productos")
-  .select("*");
+  try {
 
-if (error) {
-  console.error("Error Supabase:", error);
-  throw new Error("No se pudieron cargar los productos");
-}
+    const { data, error } = await supabase
+      .from("productos")
+      .select("*");
 
-productosBackend = data;
+    if (error) {
+      console.error("Error Supabase:", error);
+      throw new Error("No se pudieron cargar los productos");
+    }
+
+    productosBackend = data;
 
     renderSubcategorias();
     renderProductos();
     renderBestSellers();
+
   } catch (error) {
     console.error("Error al cargar productos:", error);
 
@@ -214,7 +217,6 @@ productosBackend = data;
     }
   }
 }
-
 function crearCardProducto(p) {
   const nombre = p.nombre || "Producto";
   const precio = Number(p.precio) || 0;
