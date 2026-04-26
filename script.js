@@ -2,6 +2,7 @@ const SUPABASE_URL = "https://wqptuekapjcfgslapylm.supabase.co";
 const SUPABASE_KEY = "sb_publishable_YWyUgFMGDVoR_Wuv0jRqLg_oYPygF9r";
 
 const supabaseTienda = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const $ = (selector, ctx = document) => ctx.querySelector(selector);
 const $$ = (selector, ctx = document) => Array.from(ctx.querySelectorAll(selector));
 
@@ -226,7 +227,6 @@ function crearCardProducto(p) {
   const colores = p.colores || "-";
   const talles = p.talles || "-";
  const imagen = p.imagen || "";
-  const precioTransferencia = calcularPrecioTransferencia(precio);
 
   const card = document.createElement("article");
   card.className = "p-card";
@@ -245,7 +245,6 @@ function crearCardProducto(p) {
 
       <div class="product-price">
         <span class="main-price">$ ${money(precio)}</span>
-        <span class="transfer-price">o $ ${money(precioTransferencia)} por transferencia</span>
       </div>
 
       <div class="product-meta">
