@@ -1,8 +1,7 @@
 const SUPABASE_URL = "https://wqptuekapjcfgslapylm.supabase.co";
 const SUPABASE_KEY = "sb_publishable_YWyUgFMGDVoR_Wuv0jRqLg_oYPygF9r";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+const supabaseTienda = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = (selector, ctx = document) => ctx.querySelector(selector);
 const $$ = (selector, ctx = document) => Array.from(ctx.querySelectorAll(selector));
 
