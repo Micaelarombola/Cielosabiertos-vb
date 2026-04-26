@@ -1,9 +1,11 @@
+const SUPABASE_URL = "https://wqptuekapjcfgslapylm.supabase.co";
+const SUPABASE_KEY = "sb_publishable_YWyUgFMGDVoR_Wuv0jRqLg_oYPygF9r";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const $ = (selector, ctx = document) => ctx.querySelector(selector);
 const $$ = (selector, ctx = document) => Array.from(ctx.querySelectorAll(selector));
 
 const WHATSAPP_NUMBER = "5491127020865";
-const API_URL = "https://cielos-abiertos-vb-api.onrender.com/api/productos";
-const BASE_URL = "https://cielos-abiertos-vb-api.onrender.com";
 
 let productosBackend = [];
 let categoriaActual = "todos";
@@ -186,14 +188,16 @@ async function cargarProductos() {
   const grid = $("#productGrid");
   const bestSellerGrid = $("#bestSellerGrid");
 
-  try {
-    const res = await fetch(API_URL);
+ const { data, error } = await supabase
+  .from("productos")
+  .select("*");
 
-    if (!res.ok) {
-      throw new Error("No se pudieron cargar los productos");
-    }
+if (error) {
+  console.error("Error Supabase:", error);
+  throw new Error("No se pudieron cargar los productos");
+}
 
-    productosBackend = await res.json();
+productosBackend = data;
 
     renderSubcategorias();
     renderProductos();
