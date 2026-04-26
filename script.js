@@ -2,6 +2,7 @@ const SUPABASE_URL = "https://wqptuekapjcfgslapylm.supabase.co";
 const SUPABASE_KEY = "sb_publishable_YWyUgFMGDVoR_Wuv0jRqLg_oYPygF9r";
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const $ = (selector, ctx = document) => ctx.querySelector(selector);
 const $$ = (selector, ctx = document) => Array.from(ctx.querySelectorAll(selector));
 
@@ -189,17 +190,17 @@ async function cargarProductos() {
   const bestSellerGrid = $("#bestSellerGrid");
 
   try {
-
-    const { data, error } = await supabase
+    const { data, error } = await supabaseTienda
       .from("productos")
-      .select("*");
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.error("Error Supabase:", error);
       throw new Error("No se pudieron cargar los productos");
     }
 
-    productosBackend = data;
+    productosBackend = data || [];
 
     renderSubcategorias();
     renderProductos();
@@ -225,10 +226,7 @@ function crearCardProducto(p) {
   const subcategoria = p.subcategoria || "-";
   const colores = p.colores || "-";
   const talles = p.talles || "-";
-  const imagen = p.imagen
-    ? (p.imagen.startsWith("http") ? p.imagen : `${BASE_URL}${p.imagen}`)
-    : "";
-
+ const imagen = p.imagen || "";
   const precioTransferencia = calcularPrecioTransferencia(precio);
 
   const card = document.createElement("article");
