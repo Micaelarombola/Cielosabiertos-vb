@@ -279,10 +279,15 @@ let productosFiltrados = [...productosBackend];
   }
 
   if (subcategoriaActual !== "todas") {
-    productosFiltrados = productosFiltrados.filter((producto) => {
-      return normalizarTexto(producto.subcategoria) === subcategoriaActual;
-    });
-  }
+  productosFiltrados = productosFiltrados.filter((producto) => {
+    if (!producto.subcategoria) return false;
+
+    const subProducto = normalizarTexto(producto.subcategoria.trim());
+    const subFiltro = normalizarTexto(subcategoriaActual.trim());
+
+    return subProducto === subFiltro;
+  });
+}
 
   if (!productosFiltrados.length) {
     grid.innerHTML = `<p class="empty-state">No hay productos cargados en esta categoría.</p>`;
