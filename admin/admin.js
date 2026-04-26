@@ -1,157 +1,339 @@
-// ===============================
-// SUPABASE CONFIG
-// ===============================
 const SUPABASE_URL = "https://wqptuekapjcfgslapylm.supabase.co";
-const SUPABASE_KEY = "TU_KEY_AQUI";
-
+const SUPABASE_KEY = "sb_publishable_YWyUgFMGDVoR_Wuv0jRqLg_oYPygF9r";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ===============================
-// VARIABLES
-// ===============================
+const SUBCATEGORIAS = {
+  "partes-de-arriba": [
+    "Buzo",
+    "Campera",
+    "Saco",
+    "Remera",
+    "Sweaters",
+    "Remerones",
+    "Camisacos",
+    "Tapado",
+    "Vestido"
+  ],
+  "partes-de-abajo": [
+    "Jean",
+    "Pantalon",
+    "Short",
+    "Pollera"
+  ],
+  "linea-deportiva": [
+    "Top",
+    "Chupines",
+    "Biker",
+    "Short",
+    "Pollera short",
+    "Remera deportiva",
+    "Sudadera"
+  ],
+  "calzados": [
+    "Botas",
+    "Zapatillas",
+    "Sandalias",
+    "Texanas",
+    "Mocasines"
+  ],
+  "accesorios": [
+    "Carteras",
+    "Cintos",
+    "Bijou",
+    "Pañuelos",
+    "Gorras"
+  ],
+  "ofertas-imperdibles": [
+    "Ofertas imperdibles"
+  ]
+};
+
 const form = document.getElementById("productoForm");
-const lista = document.getElementById("listaProductos");
+const productoId = document.getElementById("productoId");
+const nombre = document.getElementById("nombre");
+const precio = document.getElementById("precio");
+const descripcion = document.getElementById("descripcion");
+const categoria = document.getElementById("categoria");
+const subcategoria = document.getElementById("subcategoria");
+const talles = document.getElementById("talles");
+const colores = document.getElementById("colores");
+const stock = document.getElementById("stock");
+const imagen = document.getElementById("imagen");
+const listaProductos = document.getElementById("listaProductos");
+const submitBtn = document.getElementById("submitBtn");
 
-let productos = [];
+function cargarSubcategorias(categoriaSeleccionada, subSeleccionada = "") {
+  subcategoria.innerHTML = `<option value="">Seleccionar subcategoría</option>`;
 
-// ===============================
-// CARGAR PRODUCTOS
-// ===============================
-async function cargarProductos() {
-  const { data, error } = await supabaseClient
-    .from("productos")
-    .select("*")
-    .order("id", { ascending: false });
+  const opciones = SUBCATEGORIAS[categoriaSeleccionada] || [];
 
-  if (error) {
-    console.error("Error cargando productos:", error);
-    return;
-  }
+  opciones.forEach((sub) => {
+    const option = document.createElement("option");
+    option.value = sub;
+    option.textContent = sub;
 
-  productos = data;
-  renderProductos();
+    if (sub === subSeleccionada) {
+      option.selected = true;
+    }
+
+    subcategoria.appendChild(option);
+  });
 }
 
-// ===============================
-// SUBIR IMAGEN
-// ===============================
+categoria.addEventListener("change", () => {
+  cargarSubcategorias(categoria.value);
+});
+
+function formatearCategoria(valor) {
+  const mapa = {
+    "partes-de-arriba": "Partes de arriba",
+    "partes-de-abajo": "Partes de abajo",
+    "linea-deportiva": "Línea deportiva",
+    "calzados": "Calzados",
+    "accesorios": "Accesorios",
+    "ofertas-imperdibles": "Ofertas imperdibles"
+  };
+
+  return mapa[valor] || valor || "-";
+}
+
+function resetFormulario() {
+  form.reset();
+  productoId.value = "";
+  cargarSubcategorias("");
+  submitBtn.textContent = "Guardar producto";
+
+  const btnCancelar = document.getElementById("btnCancelar");
+  if (btnCancelar) btnCancelar.remove();
+}
+
+function mostrarBotonCancelar() {
+  let btnCancelar = document.getElementById("btnCancelar");
+
+  if (!btnCancelar) {
+    btnCancelar = document.createElement("button");
+    btnCancelar.type = "button";
+    btnCancelar.id = "btnCancelar";
+    btnCancelar.textContent = "Cancelar edición";
+    btnCancelar.className = "btn-cancelar";
+    btnCancelar.addEventListener("click", resetFormulario);
+    form.appendChild(btnCancelar);
+  }
+}
+
 async function subirImagen(file) {
+  if (!file) return "";
+
   const nombreArchivo = `${Date.now()}-${file.name}`;
 
-  const { data, error } = await supabaseClient.storage
+  const { error } = await supabaseClient.storage
     .from("productos")
     .upload(nombreArchivo, file);
 
   if (error) {
     console.error("Error subiendo imagen:", error);
-    return null;
+    throw new Error("No se pudo subir la imagen");
   }
 
-  const { data: urlData } = supabaseClient.storage
+  const { data } = supabaseClient.storage
     .from("productos")
     .getPublicUrl(nombreArchivo);
 
-  return urlData.publicUrl;
+  return data.publicUrl;
 }
 
-// ===============================
-// GUARDAR PRODUCTO
-// ===============================
+async function cargarProductosAdmin() {
+  try {
+    const { data, error } = await supabaseClient
+      .from("productos")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    listaProductos.innerHTML = "";
+
+    if (!data || data.length === 0) {
+      listaProductos.innerHTML = `<div class="empty-admin">No hay productos cargados todavía.</div>`;
+      return;
+    }
+
+    data.forEach((producto) => {
+      const div = document.createElement("div");
+      div.className = "producto-admin";
+
+      div.innerHTML = `
+        ${
+          producto.imagen
+            ? `<img src="${producto.imagen}" alt="${producto.nombre}">`
+            : `<div class="empty-admin">Sin imagen</div>`
+        }
+
+        <div class="contenido">
+          <h3>${producto.nombre || "-"}</h3>
+          <p><strong>Precio:</strong> $${Number(producto.precio || 0).toLocaleString("es-AR")}</p>
+          <p><strong>Descripción:</strong> ${producto.descripcion || "-"}</p>
+          <p><strong>Categoría:</strong> ${formatearCategoria(producto.categoria)}</p>
+          <p><strong>Subcategoría:</strong> ${producto.subcategoria || "-"}</p>
+          <p><strong>Talles:</strong> ${producto.talles || "-"}</p>
+          <p><strong>Colores:</strong> ${producto.colores || "-"}</p>
+          <p><strong>Stock:</strong> ${producto.stock ?? 0}</p>
+        </div>
+
+        <div class="acciones">
+          <button class="btn-editar" data-id="${producto.id}">Editar</button>
+          <button class="btn-eliminar" data-id="${producto.id}">Eliminar</button>
+        </div>
+      `;
+
+      listaProductos.appendChild(div);
+    });
+  } catch (error) {
+    console.error("Error al cargar productos:", error);
+    listaProductos.innerHTML = `<div class="empty-admin">Error al cargar productos.</div>`;
+  }
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const nombre = document.getElementById("nombre").value;
-  const precio = document.getElementById("precio").value;
-  const descripcion = document.getElementById("descripcion").value;
-  const categoria = document.getElementById("categoria").value;
-  const subcategoria = document.getElementById("subcategoria").value;
-  const talles = document.getElementById("talles").value;
-  const colores = document.getElementById("colores").value;
-  const stock = document.getElementById("stock").value;
-  const imagenFile = document.getElementById("imagen").files[0];
+  try {
+    if (!nombre.value.trim()) {
+      alert("Ingresá el nombre del producto.");
+      return;
+    }
 
-  let imagenURL = null;
+    if (!precio.value || Number(precio.value) <= 0) {
+      alert("Ingresá un precio válido.");
+      return;
+    }
 
-  if (imagenFile) {
-    imagenURL = await subirImagen(imagenFile);
+    if (!categoria.value) {
+      alert("Seleccioná una categoría.");
+      return;
+    }
+
+    if (!subcategoria.value) {
+      alert("Seleccioná una subcategoría.");
+      return;
+    }
+
+    let imagenUrl = "";
+
+    if (imagen.files[0]) {
+      imagenUrl = await subirImagen(imagen.files[0]);
+    }
+
+    const productoData = {
+      nombre: nombre.value.trim(),
+      precio: Number(precio.value),
+      descripcion: descripcion.value.trim(),
+      categoria: categoria.value,
+      subcategoria: subcategoria.value,
+      talles: talles.value.trim(),
+      colores: colores.value.trim(),
+      stock: Number(stock.value || 0)
+    };
+
+    if (imagenUrl) {
+      productoData.imagen = imagenUrl;
+    }
+
+    let error;
+
+    if (productoId.value) {
+      const response = await supabaseClient
+        .from("productos")
+        .update(productoData)
+        .eq("id", productoId.value);
+
+      error = response.error;
+    } else {
+      const response = await supabaseClient
+        .from("productos")
+        .insert([productoData]);
+
+      error = response.error;
+    }
+
+    if (error) {
+      console.error("Error Supabase:", error);
+      alert(error.message);
+      return;
+    }
+
+    alert(productoId.value ? "Producto actualizado correctamente." : "Producto guardado correctamente.");
+
+    resetFormulario();
+    cargarProductosAdmin();
+  } catch (error) {
+    console.error("Error al guardar producto:", error);
+    alert("Hubo un error al guardar el producto.");
   }
-
-  const { error } = await supabaseClient.from("productos").insert([
-    {
-      nombre,
-      precio,
-      descripcion,
-      categoria,
-      subcategoria,
-      talles,
-      colores,
-      stock,
-      imagen: imagenURL,
-    },
-  ]);
-
-  if (error) {
-    console.error("Error al guardar:", error);
-    alert("Error al guardar el producto");
-    return;
-  }
-
-  form.reset();
-  cargarProductos();
 });
 
-// ===============================
-// RENDER PRODUCTOS
-// ===============================
-function renderProductos() {
-  lista.innerHTML = "";
+async function editarProducto(id) {
+  try {
+    const { data, error } = await supabaseClient
+      .from("productos")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-  if (productos.length === 0) {
-    lista.innerHTML = "<p>No hay productos cargados</p>";
-    return;
+    if (error) throw error;
+
+    productoId.value = data.id;
+    nombre.value = data.nombre || "";
+    precio.value = data.precio || "";
+    descripcion.value = data.descripcion || "";
+    categoria.value = data.categoria || "";
+    cargarSubcategorias(data.categoria || "", data.subcategoria || "");
+    talles.value = data.talles || "";
+    colores.value = data.colores || "";
+    stock.value = data.stock ?? 0;
+
+    submitBtn.textContent = "Actualizar producto";
+    mostrarBotonCancelar();
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (error) {
+    console.error("Error al editar producto:", error);
+    alert("No se pudo cargar el producto.");
   }
-
-  productos.forEach((p) => {
-    const div = document.createElement("div");
-    div.classList.add("producto-admin");
-
-    div.innerHTML = `
-      <img src="${p.imagen || ""}" />
-      <div class="contenido">
-        <h3>${p.nombre}</h3>
-        <p><strong>Precio:</strong> $${p.precio}</p>
-        <p><strong>Categoría:</strong> ${p.categoria}</p>
-        <p><strong>Subcategoría:</strong> ${p.subcategoria}</p>
-        <p><strong>Talles:</strong> ${p.talles || "-"}</p>
-        <p><strong>Colores:</strong> ${p.colores || "-"}</p>
-      </div>
-      <div class="acciones">
-        <button onclick="eliminarProducto('${p.id}')">Eliminar</button>
-      </div>
-    `;
-
-    lista.appendChild(div);
-  });
 }
 
-// ===============================
-// ELIMINAR PRODUCTO
-// ===============================
 async function eliminarProducto(id) {
-  const { error } = await supabaseClient
-    .from("productos")
-    .delete()
-    .eq("id", id);
+  const confirmar = confirm("¿Seguro que querés eliminar este producto?");
+  if (!confirmar) return;
 
-  if (error) {
-    console.error("Error eliminando:", error);
+  try {
+    const { error } = await supabaseClient
+      .from("productos")
+      .delete()
+      .eq("id", id);
+
+    if (error) throw error;
+
+    alert("Producto eliminado correctamente.");
+    cargarProductosAdmin();
+  } catch (error) {
+    console.error("Error al eliminar:", error);
+    alert("No se pudo eliminar el producto.");
+  }
+}
+
+document.addEventListener("click", (e) => {
+  const btnEditar = e.target.closest(".btn-editar");
+  if (btnEditar) {
+    editarProducto(btnEditar.dataset.id);
     return;
   }
 
-  cargarProductos();
-}
+  const btnEliminar = e.target.closest(".btn-eliminar");
+  if (btnEliminar) {
+    eliminarProducto(btnEliminar.dataset.id);
+  }
+});
 
-// ===============================
-// INICIO
-// ===============================
-cargarProductos();
+cargarSubcategorias("");
+cargarProductosAdmin();
