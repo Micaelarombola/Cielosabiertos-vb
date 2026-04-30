@@ -225,17 +225,17 @@ form.addEventListener("submit", async (e) => {
       imagenUrl = await subirImagen(imagen.files[0]);
     }
 
-    const productoData = {
-      nombre: nombre.value.trim(),
-      precio: Number(precio.value),
-      descripcion: descripcion.value.trim(),
-      categoria: categoria.value,
-      subcategoria: subcategoria.value,
-      talles: talles.value.trim(),
-      colores: colores.value.trim(),
-      stock: Number(stock.value || 0)
-      estado: estado.value || "normal",
-    };
+const productoData = {
+  nombre: nombre.value.trim(),
+  precio: Number(precio.value),
+  descripcion: descripcion.value.trim(),
+  categoria: categoria.value,
+  subcategoria: subcategoria.value,
+  talles: talles.value.trim(),
+  colores: colores.value.trim(),
+  stock: Number(stock.value || 0),
+  estado: estado.value || "normal"
+};
 
     if (imagenUrl) {
       productoData.imagen = imagenUrl;
