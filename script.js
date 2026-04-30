@@ -19,6 +19,7 @@ const SUBCATEGORIAS = {
     "Campera",
     "Saco",
     "Remera",
+    "Remera Manga Larga",
     "Sweters",
     "Remerones",
     "Camisacos",
@@ -226,18 +227,33 @@ function crearCardProducto(p) {
   const subcategoria = p.subcategoria || "-";
   const colores = p.colores || "-";
   const talles = p.talles || "-";
- const imagen = p.imagen || "";
+  const estado = p.estado || "normal";
+
+let estadoHTML = "";
+
+if (estado === "por_agotarse") {
+  estadoHTML = `<span class="estado-producto por-agotarse">Por agotarse</span>`;
+}
+
+if (estado === "agotada") {
+  estadoHTML = `<span class="estado-producto agotada">Agotada</span>`;
+}
+
+if (estado === "sin_stock") {
+  estadoHTML = `<span class="estado-producto sin-stock">Sin stock</span>`;
+}
+  const imagen = p.imagen || "";
 
   const card = document.createElement("article");
   card.className = "p-card";
 
   card.innerHTML = `
     <div class="product-thumb">
-      ${
-        imagen
-          ? `<img src="${imagen}" alt="${escaparHTML(nombre)}">`
-          : `<div class="no-image">Sin imagen</div>`
-      }
+      ${imagen
+      ? `<img src="${imagen}" alt="${escaparHTML(nombre)}">`
+      ${estadoHTML}
+      : `<div class="no-image">Sin imagen</div>`
+    }
     </div>
 
     <div class="product-info">
@@ -273,7 +289,7 @@ function renderProductos() {
 
   grid.innerHTML = "";
 
-let productosFiltrados = [...productosBackend];
+  let productosFiltrados = [...productosBackend];
   if (categoriaActual !== "todos") {
     productosFiltrados = productosFiltrados.filter((producto) => {
       return normalizarTexto(producto.categoria) === categoriaActual;
@@ -281,15 +297,15 @@ let productosFiltrados = [...productosBackend];
   }
 
   if (subcategoriaActual !== "todas") {
-  productosFiltrados = productosFiltrados.filter((producto) => {
-    if (!producto.subcategoria) return false;
+    productosFiltrados = productosFiltrados.filter((producto) => {
+      if (!producto.subcategoria) return false;
 
-    const subProducto = normalizarTexto(producto.subcategoria.trim());
-    const subFiltro = normalizarTexto(subcategoriaActual.trim());
+      const subProducto = normalizarTexto(producto.subcategoria.trim());
+      const subFiltro = normalizarTexto(subcategoriaActual.trim());
 
-    return subProducto === subFiltro;
-  });
-}
+      return subProducto === subFiltro;
+    });
+  }
 
   if (!productosFiltrados.length) {
     grid.innerHTML = `<p class="empty-state">No hay productos cargados en esta categoría.</p>`;

@@ -41,6 +41,19 @@
       <input type="text" id="talles" placeholder="Talles ej: S, M, L">
       <input type="text" id="colores" placeholder="Colores ej: Blanco, Rosa, Negro">
       <input type="number" id="stock" placeholder="Stock" min="0">
+      <input type="number" id="stock" placeholder="Stock" min="0">
+
+<div class="field-group">
+  <label for="estado">Estado del producto</label>
+  <select id="estado">
+    <option value="normal">Normal</option>
+    <option value="por_agotarse">Por agotarse</option>
+    <option value="agotada">Agotada</option>
+    <option value="sin_stock">Sin stock</option>
+  </select>
+</div>
+
+<input type="file" id="imagen" accept="image/*">
       <input type="file" id="imagen" accept="image/*">
 
       <button type="submit" id="submitBtn">Guardar producto</button>

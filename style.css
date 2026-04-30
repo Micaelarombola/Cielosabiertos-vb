@@ -1525,3 +1525,23 @@ button{
     grid-template-columns:1fr;
   }
 }
+.estado-producto {
+  display: inline-block;
+  margin: 0 0 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.por-agotarse {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.agotada,
+.sin-stock {
+  background: #f8d7da;
+  color: #721c24;
+}

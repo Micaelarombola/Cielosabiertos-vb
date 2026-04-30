@@ -8,6 +8,7 @@ const SUBCATEGORIAS = {
     "Campera",
     "Saco",
     "Remera",
+    "Remera Manga Larga",
     "Sweaters",
     "Remerones",
     "Camisacos",
@@ -52,6 +53,7 @@ const form = document.getElementById("productoForm");
 const productoId = document.getElementById("productoId");
 const nombre = document.getElementById("nombre");
 const precio = document.getElementById("precio");
+const estado = document.getElementById("estado");
 const descripcion = document.getElementById("descripcion");
 const categoria = document.getElementById("categoria");
 const subcategoria = document.getElementById("subcategoria");
@@ -163,10 +165,9 @@ async function cargarProductosAdmin() {
       div.className = "producto-admin";
 
       div.innerHTML = `
-        ${
-          producto.imagen
-            ? `<img src="${producto.imagen}" alt="${producto.nombre}">`
-            : `<div class="empty-admin">Sin imagen</div>`
+        ${producto.imagen
+          ? `<img src="${producto.imagen}" alt="${producto.nombre}">`
+          : `<div class="empty-admin">Sin imagen</div>`
         }
 
         <div class="contenido">
@@ -233,6 +234,7 @@ form.addEventListener("submit", async (e) => {
       talles: talles.value.trim(),
       colores: colores.value.trim(),
       stock: Number(stock.value || 0)
+      estado: estado.value || "normal",
     };
 
     if (imagenUrl) {
@@ -285,6 +287,7 @@ async function editarProducto(id) {
     productoId.value = data.id;
     nombre.value = data.nombre || "";
     precio.value = data.precio || "";
+    estado.value = data.estado || "normal";
     descripcion.value = data.descripcion || "";
     categoria.value = data.categoria || "";
     cargarSubcategorias(data.categoria || "", data.subcategoria || "");
