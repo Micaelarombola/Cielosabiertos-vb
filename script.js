@@ -251,13 +251,13 @@ if (estado === "sin_stock") {
     <div class="product-thumb">
       ${imagen
       ? `<img src="${imagen}" alt="${escaparHTML(nombre)}">`
-      ${estadoHTML}
       : `<div class="no-image">Sin imagen</div>`
     }
     </div>
 
     <div class="product-info">
       <h3 class="product-name">${escaparHTML(nombre)}</h3>
+      ${estadoHTML}
 
       <div class="product-price">
         <span class="main-price">$ ${money(precio)}</span>
@@ -355,17 +355,14 @@ function renderSubcategorias() {
     const btn = document.createElement("button");
     btn.className = "subcat-btn";
     btn.textContent = sub;
-    btn.dataset.subcat = sub === "Todas" ? "todas" : normalizarTexto(sub);
+    btn.dataset.subcat = normalizarTexto(sub);
 
-    if (
-      (sub === "Todas" && subcategoriaActual === "todas") ||
-      normalizarTexto(sub) === subcategoriaActual
-    ) {
+    if (normalizarTexto(sub) === subcategoriaActual) {
       btn.classList.add("active");
     }
 
     btn.addEventListener("click", () => {
-      subcategoriaActual = sub === "Todas" ? "todas" : normalizarTexto(sub);
+      subcategoriaActual = normalizarTexto(sub);
 
       $$(".subcat-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
