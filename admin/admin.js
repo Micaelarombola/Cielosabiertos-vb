@@ -122,15 +122,80 @@ function mostrarBotonCancelar() {
     form.appendChild(btnCancelar);
   }
 }
+async function comprimirImagen(file, maxWidth = 1200, calidad = 0.75) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.startsWith("image/")) {
+      reject("El archivo no es una imagen válida");
+      return;
+    }
 
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      img.src = e.target.result;
+    };
+
+    img.onload = function () {
+      const canvas = document.createElement("canvas");
+
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject("No se pudo comprimir la imagen");
+            return;
+          }
+
+          const imagenComprimida = new File(
+            [blob],
+            file.name.replace(/\.[^/.]+$/, "") + ".webp",
+            { type: "image/webp" }
+          );
+
+          resolve(imagenComprimida);
+        },
+        "image/webp",
+        calidad
+      );
+    };
+
+    img.onerror = reject;
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 async function subirImagen(file) {
   if (!file) return "";
 
-  const nombreArchivo = `${Date.now()}-${file.name}`;
+  if (!file.type.startsWith("image/")) {
+    alert("Solo podés subir imágenes.");
+    return "";
+  }
+
+  const imagenComprimida = await comprimirImagen(file);
+
+  const nombreArchivo = `${Date.now()}-${crypto.randomUUID()}.webp`;
 
   const { error } = await supabaseClient.storage
     .from("productos")
-    .upload(nombreArchivo, file);
+    .upload(nombreArchivo, imagenComprimida, {
+      contentType: "image/webp",
+      upsert: false
+    });
 
   if (error) {
     console.error("Error subiendo imagen:", error);
